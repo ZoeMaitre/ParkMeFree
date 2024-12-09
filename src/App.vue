@@ -1,5 +1,7 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import HelloWorld from './components/HelloWorld.vue';
+import UserList from './components/UserList.vue';
+
 </script>
 
 <template>
@@ -12,6 +14,9 @@ import HelloWorld from './components/HelloWorld.vue'
     </a>
   </div>
   <HelloWorld msg="Vite + Vue" />
+  <div id="app">
+    <UserList />
+  </div>
 </template>
 
 <style scoped>

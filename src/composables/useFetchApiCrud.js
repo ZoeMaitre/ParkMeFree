@@ -1,4 +1,4 @@
-import { useFetchApi } from 'useFetchApi.js';
+import { useFetchApi } from './useFetchApi.js';
 
 /**
  * Fetch data from an API and perform CRUD operations
@@ -18,10 +18,10 @@ import { useFetchApi } from 'useFetchApi.js';
  */
 export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
 
-    const { fetchApiToRef } = useFetchApi(baseUrl, additionalHeaders);
+    const { fetchApi } = useFetchApi(baseUrl, additionalHeaders);
 
     function read(id, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
+        return fetchApi({
             url: `${path}/${id}`,
             method: 'GET',
             headers,
@@ -30,8 +30,8 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
     }
 
     function readAll(headers = {}, timeout = 5000) {
-        return fetchApiToRef({
-            url: path,
+        return fetchApi({
+            url: `${path}/allUsers`,
             method: 'GET',
             headers,
             timeout,
@@ -39,7 +39,7 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
     }
 
     function create(data, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
+        return fetchApi({
             url: path,
             data,
             method: 'POST',
@@ -49,7 +49,7 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
     }
 
     function del(id, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
+        return fetchApi({
             url: `${path}/${id}`,
             method: 'DELETE',
             headers,
@@ -58,7 +58,7 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
     }
 
     function update(id, data, headers = {}, timeout = 5000) {
-        return fetchApiToRef({
+        return fetchApi({
             url: `${path}/${id}`,
             data,
             method: 'PATCH',
@@ -73,6 +73,6 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
         create,
         del,
         update,
-        fetchApiToRef
+        fetchApi
     };
 }

@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref } from 'vue';
 
 const defaultHeaders = {
     'Content-Type': 'application/json',
@@ -13,8 +13,12 @@ export function setDefaultHeaders(headers) {
 }
 
 export function setDefaultBaseUrl(url) {
-    if (url[url.length - 1] === '/') url = url.slice(0, -1);
-    defaultBaseUrl = url;
+    if (url && url.length > 0) {
+        if (url[url.length - 1] === '/') url = url.slice(0, -1);
+        defaultBaseUrl = url;
+    } else {
+        console.warn('Base URL is not defined or empty.');
+    }
 }
 
 /**
@@ -117,3 +121,6 @@ export function useFetchApi(baseUrl = null, additionalHeaders = {}) {
 
     return { fetchApi, fetchApiToRef };
 }
+
+// Définir l'URL de base par défaut à partir des variables d'environnement
+setDefaultBaseUrl(import.meta.env.VITE_API_URL);
