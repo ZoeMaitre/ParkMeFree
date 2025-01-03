@@ -1,120 +1,233 @@
 <template>
-    <div class="signup-form">
-        <h2>Créer un compte</h2>
-        <form @submit.prevent="handleSubmit">
-
-            <div>
-                <label for="firstname">Prénom:</label>
-                <input type="text" id="firstname" v-model="firstname" required />
-            </div>
-            <div>
-                <label for="lastname">Nom:</label>
-                <input type="text" id="lastname" v-model="lastname" required />
-            </div>
-            <div>
-                <label for="username">Nom d'utilisateur:</label>
-                <input type="text" id="username" v-model="username" required />
-            </div>
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" v-model="email" required />
-            </div>
-            <div>
-                <label for="password">Mot de passe:</label>
-                <input type="password" id="password" v-model="password" required />
-            </div>
-            <button type="submit">S'inscrire</button>
-        </form>
+    <div class="signup-container">
+      <div class="title">ParkMeFree</div>
+      <div class="background"></div>
+      <form @submit.prevent="handleSubmit" class="signup-form">
+        <div class="form-group">
+          <label for="firstname" class="label">Prénom</label>
+          <input type="text" id="firstname" v-model="firstname" required class="input" />
+        </div>
+        <div class="form-group">
+          <label for="lastname" class="label">Nom</label>
+          <input type="text" id="lastname" v-model="lastname" required class="input" />
+        </div>
+        <div class="form-group">
+          <label for="username" class="label">Nom d'utilisateur</label>
+          <input type="text" id="username" v-model="username" required class="input" />
+        </div>
+        <div class="form-group">
+          <label for="email" class="label">E-mail</label>
+          <input type="email" id="email" v-model="email" required class="input" />
+        </div>
+        <div class="form-group">
+          <label for="password" class="label">Mot de passe</label>
+          <input type="password" id="password" v-model="password" required class="input" />
+        </div>
+        <button type="submit" class="submit-button">S'inscrire</button>
+      </form>
+      <div v-if="error" class="error-message">{{ error.message }}</div>
     </div>
-</template>
+  </template>
+  
 
-<script>
-export default {
-    data() {
-        return {
-            firstname: '',
-            lastname: '',
-            username: '',
-            email: '',
-            password: ''
-        };
-    },
-    methods: {
-        async handleSubmit() {
-            // Logique pour gérer la soumission du formulaire
-            const userData = {
-                firstname: this.firstname,
-                lastname: this.lastname,
-                username: this.username,
-                email: this.email,
-                password: this.password
-            };
-            console.log('User Data:', userData);
-            // Vous pouvez ajouter ici une requête pour envoyer les données à votre APi
+<!-- fonctionne pas -->
+<script setup>
+import { ref } from 'vue';
+import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
 
-            try {
-                const response = await fetch(import.meta.env.VITE_API_URL + 'users/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(userData)
-                });
+const { create } = useFetchApiCrud('users/register');
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
+const firstname = ref('');
+const lastname = ref('');
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const error = ref(null);
 
-                const result = await response.json();
-                console.log('Success:', result);
-                // Traitez la réponse de l'API ici (par exemple, rediriger l'utilisateur, afficher un message de succès, etc.)
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-                // Gérez les erreurs ici (par exemple, afficher un message d'erreur à l'utilisateur)
-            }
+const handleSubmit = () => {
+  const userData = {
+    firstName: firstname.value,
+    lastName: lastname.value,
+    userName: username.value,
+    email: email.value,
+    password: password.value,
+  };
 
-        }
-    }
+  console.log('User Data:', userData);
+
+  create(userData)
+    .then(response => {
+      console.log('Utilisateur inscrit:', response);
+      // Rediriger ou afficher un message de succès
+    })
+    .catch(err => {
+      console.error('Erreur lors de l\'inscription:', err);
+      error.value = err;
+    });
 };
 </script>
 
 <style scoped>
+.signup-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background-color: #a9c8c9;
+  overflow: auto; /* Permettre le défilement */
+  text-align: center;
+  font-size: 16px;
+  color: #d9d9d9;
+  font-family: 'Lexend', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.background {
+  position: absolute;
+  top: 30vh;
+  left: 0;
+  backdrop-filter: blur(4px);
+  border-top-left-radius: 25px; /* Arrondir les bords en haut à gauche */
+  border-top-right-radius: 25px;
+  background-color: #d9d9d9;
+  width: 100%;
+  height: 80%;
+}
+
+.title {
+  position: absolute;
+  top: 7vh;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 5.5vw;
+  font-family: 'Paytone One';
+  display: flex;
+  justify-content: center;
+  width: 80%;
+  max-width: 285px;
+  height: auto;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+/* Formulaire d'inscription */
 .signup-form {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 1em;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  width: 90%;
+  max-width: 320px;
+  z-index: 2;
+  margin-top: 40vh; /* Déplace le formulaire vers le bas */
 }
 
-.signup-form div {
-    margin-bottom: 1em;
+/* Groupe de champs */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1vh;
 }
 
-.signup-form label {
-    margin-bottom: .5em;
-    color: #ffffff;
-    display: block;
+/* Libellé des champs */
+.label {
+  color: #68a2a4;
+  font-size: 1.1rem;
+  font-family: 'Lexend', sans-serif;
+  font-weight: 500;
+  line-height: 1.5em;
 }
 
-.signup-form input {
-    border: 1px solid #CCCCCC;
-    padding: .5em;
-    font-size: 1em;
-    width: 100%;
-    box-sizing: border-box;
+/* Champ d'entrée */
+.input {
+  padding: 1vh 1.5vh;
+  background: white;
+  box-shadow: 0px 0.1vh 0.2vh rgba(16, 24, 40, 0.05);
+  border-radius: 0.8vh;
+  border: 0.1vh solid #bad6cc;
+  font-size: 1rem;
+  font-family: 'Lexend', sans-serif;
+  color: #68a2a4;
+  outline: none;
 }
 
-.signup-form button {
-    padding: 0.7em;
-    color: #fff;
-    background-color: #007BFF;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+/* Bouton de soumission */
+.submit-button {
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.13);
+  border-radius: 25px;
+  box-sizing: border-box;
+  width: 50vw;
+  max-width: 210px;
+  height: 7vh;
+  max-height: 49px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  margin: 10px auto; /* Centrer le bouton */
+  background-color: #68a2a4;
+  border: 1px solid #68a2a4;
+  color: #fffaf5;
+  cursor: pointer;
+  transition: background 0.3s ease;
 }
 
-.signup-form button:hover {
-    background-color: #0056b3;
+.submit-button:hover {
+  background: #5b8e8f;
+}
+
+/* Message d'erreur */
+.error-message {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 1vh;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .label {
+    font-size: 1rem;
+  }
+  .background{
+    top: 30vh;
+    height: 80%;
+  }
+  .input {
+    font-size: 0.9rem;
+  }
+  .submit-button {
+    width: 60vw;
+    height: 8vh;
+  }
+  .title {
+    font-size: 8vw;
+  }
+  .signup-form {
+    margin-top: 35vh;
+  }
+}
+
+@media (max-width: 768px) {
+  .label {
+    font-size: 0.9rem;
+  }
+  .background{
+    top: 25vh;
+    height: 80%;
+  }
+  .input {
+    font-size: 0.8rem;
+  }
+  .submit-button {
+    width: 70vw;
+    height: 8vh;
+  }
+  .title {
+    font-size: 10vw;
+  }
+  .signup-form {
+    margin-top: 30vh;
+  }
 }
 </style>

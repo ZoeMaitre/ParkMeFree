@@ -31,7 +31,7 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
 
     function readAll(headers = {}, timeout = 5000) {
         return fetchApi({
-            url: `${path}/allUsers`,
+            url: `${path}/`,
             method: 'GET',
             headers,
             timeout,
