@@ -30,7 +30,7 @@
   </template>
   
 
-<!-- fonctionne pas -->
+<!-- ok fonctionne -->
 <script setup>
 import { ref } from 'vue';
 import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
