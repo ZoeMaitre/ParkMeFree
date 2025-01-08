@@ -23,17 +23,23 @@
           class="input"
         />
       </div>
-      <button type="submit" class="submit-button">Se connecter</button>
+      <div class="button-group">
+        <div class="back-icon-wrapper" @click="goBack">
+          <span class="material-symbols-outlined back-icon">arrow_left_alt</span>
+        </div>
+        <button type="submit" class="submit-button">Se connecter</button>
+      </div>
     </form>
     <div v-if="error" class="error-message">{{ error.message }}</div>
   </div>
 </template>
 
-<!-- ok -->
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
 
+const router = useRouter();
 const { create } = useFetchApiCrud('login');
 
 const email = ref('');
@@ -49,15 +55,19 @@ const loginUser = () => {
   create(loginData)
     .then(response => {
       console.log('Utilisateur connecté:', response);
-      // Rediriger ou afficher un message de succès
+      localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
+      router.push('/parkings'); // Rediriger vers la page des parkings
     })
     .catch(err => {
       console.error('Erreur lors de la connexion:', err);
       error.value = err;
     });
 };
-</script>
 
+const goBack = () => {
+  router.back();
+};
+</script>
 
 <style scoped>
 /* Conteneur principal */
@@ -170,6 +180,34 @@ const loginUser = () => {
 
 .submit-button:hover {
   background: #5b8e8f;
+}
+
+/* Groupe de boutons */
+.button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* Espace entre les boutons */
+  width: 100%;
+  max-width: 320px;
+  margin: 10px auto; /* Centrer le groupe de boutons */
+}
+
+/* Icône de retour */
+.back-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background-color: #A9C8C9; /* Vert foncé */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.back-icon {
+  font-size: 24px; /* Ajustez la taille de l'icône si nécessaire */
+  color: white; /* Couleur de l'icône */
 }
 
 /* Message d'erreur */

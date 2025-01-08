@@ -59,7 +59,11 @@ export function useFetchApi(baseUrl = null, additionalHeaders = {}) {
 
         url = url[0] === '/' ? url : '/' + url;
         const fullUrl = baseUrl + url;
+        const token = localStorage.getItem('token'); // Récupérer le token du localStorage
         const allHeaders = { ...baseHeaders, ...headers };
+        if (token) {
+            allHeaders['Authorization'] = `Bearer ${token}`; // Ajouter le token aux en-têtes
+        }
         method = method != null ? method.toUpperCase() : data != null ? 'POST' : 'GET';
 
         return new Promise((resolve, reject) => {

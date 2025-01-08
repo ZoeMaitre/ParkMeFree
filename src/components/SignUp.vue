@@ -1,41 +1,46 @@
 <template>
-    <div class="signup-container">
-      <div class="title">ParkMeFree</div>
-      <div class="background"></div>
-      <form @submit.prevent="handleSubmit" class="signup-form">
-        <div class="form-group">
-          <label for="firstname" class="label">Prénom</label>
-          <input type="text" id="firstname" v-model="firstname" required class="input" />
-        </div>
-        <div class="form-group">
-          <label for="lastname" class="label">Nom</label>
-          <input type="text" id="lastname" v-model="lastname" required class="input" />
-        </div>
-        <div class="form-group">
-          <label for="username" class="label">Nom d'utilisateur</label>
-          <input type="text" id="username" v-model="username" required class="input" />
-        </div>
-        <div class="form-group">
-          <label for="email" class="label">E-mail</label>
-          <input type="email" id="email" v-model="email" required class="input" />
-        </div>
-        <div class="form-group">
-          <label for="password" class="label">Mot de passe</label>
-          <input type="password" id="password" v-model="password" required class="input" />
+  <div class="signup-container">
+    <div class="title">ParkMeFree</div>
+    <div class="background"></div>
+    <form @submit.prevent="handleSubmit" class="signup-form">
+      <div class="form-group">
+        <label for="firstname" class="label">Prénom</label>
+        <input type="text" id="firstname" v-model="firstname" required class="input" />
+      </div>
+      <div class="form-group">
+        <label for="lastname" class="label">Nom</label>
+        <input type="text" id="lastname" v-model="lastname" required class="input" />
+      </div>
+      <div class="form-group">
+        <label for="username" class="label">Nom d'utilisateur</label>
+        <input type="text" id="username" v-model="username" required class="input" />
+      </div>
+      <div class="form-group">
+        <label for="email" class="label">E-mail</label>
+        <input type="email" id="email" v-model="email" required class="input" />
+      </div>
+      <div class="form-group">
+        <label for="password" class="label">Mot de passe</label>
+        <input type="password" id="password" v-model="password" required class="input" />
+      </div>
+      <div class="button-group">
+        <div class="back-icon-wrapper" @click="goBack">
+          <span class="material-symbols-outlined back-icon">arrow_left_alt</span>
         </div>
         <button type="submit" class="submit-button">S'inscrire</button>
-      </form>
-      <div v-if="error" class="error-message">{{ error.message }}</div>
-    </div>
-  </template>
-  
+      </div>
+    </form>
+    <div v-if="error" class="error-message">{{ error.message }}</div>
+  </div>
+</template>
 
-<!-- ok fonctionne -->
 <script setup>
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
 
 const { create } = useFetchApiCrud('users/register');
+const router = useRouter();
 
 const firstname = ref('');
 const lastname = ref('');
@@ -53,17 +58,25 @@ const handleSubmit = () => {
     password: password.value,
   };
 
-  console.log('User Data:', userData);
-
   create(userData)
     .then(response => {
       console.log('Utilisateur inscrit:', response);
-      // Rediriger ou afficher un message de succès
+      // Connexion automatique après inscription
+      return useFetchApiCrud('login').create({ email: email.value, password: password.value });
+    })
+    .then(response => {
+      console.log('Utilisateur connecté:', response);
+      localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
+      router.push('/parkings'); // Rediriger vers la page des parkings
     })
     .catch(err => {
-      console.error('Erreur lors de l\'inscription:', err);
+      console.error('Erreur lors de l\'inscription ou de la connexion:', err);
       error.value = err;
     });
+};
+
+const goBack = () => {
+  router.back();
 };
 </script>
 
@@ -175,6 +188,33 @@ const handleSubmit = () => {
 
 .submit-button:hover {
   background: #5b8e8f;
+}
+
+/* Groupe de boutons */
+.button-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 320px;
+  margin: 10px auto; /* Centrer le groupe de boutons */
+}
+
+/* Icône de retour */
+.back-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  background-color: #A9C8C9; /* Vert foncé */
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.back-icon {
+  font-size: 24px; /* Ajustez la taille de l'icône si nécessaire */
+  color: white; /* Couleur de l'icône */
 }
 
 /* Message d'erreur */
