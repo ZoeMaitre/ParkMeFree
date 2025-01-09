@@ -3,6 +3,7 @@ import Login from '../components/Login.vue';
 import Home from '../components/Accueil.vue';
 import SignUp from '../components/SignUp.vue';
 import Parkings from '../components/Parkings.vue';
+import ParkingDetail from '../components/ParkingDetail.vue';
 
 const routes = [
     {
@@ -24,7 +25,13 @@ const routes = [
         path: '/parkings',
         name: 'Parkings',
         component: Parkings,
-        meta: { requiresAuth: true } // Ajoutez cette ligne pour indiquer que cette route nécessite une authentification
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/parking/:id',
+        name: 'ParkingDetail',
+        component: ParkingDetail,
+        props: true
     }
 ];
 

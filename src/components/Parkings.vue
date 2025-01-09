@@ -7,10 +7,10 @@
       </div>
       <div class="logout-icon-wrapper" @click="logoutUser">
         <img src="/LogOut.svg" alt="Logout Icon" class="logout-icon" />
-        </div>
+      </div>
     </div>
     <div class="cards-container">
-      <div v-for="parking in filteredParkings" :key="parking.id" class="parking-card">
+      <div v-for="parking in filteredParkings" :key="parking._id" class="parking-card" @click="goToDetail(parking._id)">
         <div class="parking-image-container">
           <img :src="parking.picture" alt="Parking Image" class="parking-image">
         </div>
@@ -74,6 +74,14 @@ const logoutUser = () => {
   router.push('/login');
 };
 
+const goToDetail = (id) => {
+  if (id) {
+    router.push({ name: 'ParkingDetail', params: { id } });
+  } else {
+    console.error('ID du parking manquant');
+  }
+};
+
 onMounted(() => {
   fetchParkings();
 });
@@ -132,7 +140,7 @@ body, html {
   top: 20px;
   width: 40px;
   height: 40px;
-  background-color: red;
+  background-color: #ff0000; /* Vert foncé */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -141,8 +149,8 @@ body, html {
 }
 
 .logout-icon {
-  font-size: 20px; /* Ajustez la taille de l'icône si nécessaire */
-  color: white;
+  width: 20px; /* Ajustez la taille de l'icône si nécessaire */
+  height: 20px;
 }
 
 .search-bar {
@@ -179,6 +187,7 @@ body, html {
   flex-direction: row;
   max-width: 450px; /* Taille maximale des cartes */
   height: 200px; /* Hauteur fixe des cartes */
+  cursor: pointer; /* Ajouter un curseur pointeur pour indiquer que la carte est cliquable */
 }
 
 .parking-image-container {
