@@ -4,6 +4,8 @@ import Home from '../components/Accueil.vue';
 import SignUp from '../components/SignUp.vue';
 import Parkings from '../components/Parkings.vue';
 import ParkingDetail from '../components/ParkingDetail.vue';
+import AddCar from '../components/AddCar.vue';
+import ParkingSession from '../components/ParkingSession.vue';
 
 const routes = [
     {
@@ -31,7 +33,20 @@ const routes = [
         path: '/parking/:id',
         name: 'ParkingDetail',
         component: ParkingDetail,
-        props: true
+        props: true,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/addCar',
+        name: 'AddCar',
+        component: AddCar,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/parkingSession',
+        name: 'ParkingSession',
+        component: ParkingSession,
+        meta: { requiresAuth: true }
     }
 ];
 

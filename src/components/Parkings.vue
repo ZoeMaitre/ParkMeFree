@@ -71,7 +71,7 @@ const filteredParkings = computed(() => {
 
 const logoutUser = () => {
   localStorage.removeItem('token');
-  router.push('/login');
+  router.push('/');
 };
 
 const goToDetail = (id) => {

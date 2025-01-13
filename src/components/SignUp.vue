@@ -6,22 +6,27 @@
       <div class="form-group">
         <label for="firstname" class="label">Prénom</label>
         <input type="text" id="firstname" v-model="firstname" required class="input" />
+        <span v-if="errors.firstname" class="error-message">{{ errors.firstname }}</span>
       </div>
       <div class="form-group">
         <label for="lastname" class="label">Nom</label>
         <input type="text" id="lastname" v-model="lastname" required class="input" />
+        <span v-if="errors.lastname" class="error-message">{{ errors.lastname }}</span>
       </div>
       <div class="form-group">
         <label for="username" class="label">Nom d'utilisateur</label>
         <input type="text" id="username" v-model="username" required class="input" />
+        <span v-if="errors.username" class="error-message">{{ errors.username }}</span>
       </div>
       <div class="form-group">
         <label for="email" class="label">E-mail</label>
         <input type="email" id="email" v-model="email" required class="input" />
+        <span v-if="errors.email" class="error-message">{{ errors.email }}</span>
       </div>
       <div class="form-group">
         <label for="password" class="label">Mot de passe</label>
         <input type="password" id="password" v-model="password" required class="input" />
+        <span v-if="errors.password" class="error-message">{{ errors.password }}</span>
       </div>
       <div class="button-group">
         <div class="back-icon-wrapper" @click="goBack">
@@ -30,7 +35,7 @@
         <button type="submit" class="submit-button">S'inscrire</button>
       </div>
     </form>
-    <div v-if="error" class="error-message">{{ error.message }}</div>
+    <div v-if="error" class="error-message">{{ error }}</div>
   </div>
 </template>
 
@@ -48,31 +53,52 @@ const username = ref('');
 const email = ref('');
 const password = ref('');
 const error = ref(null);
+const errors = ref({});
 
-const handleSubmit = () => {
-  const userData = {
-    firstName: firstname.value,
-    lastName: lastname.value,
-    userName: username.value,
-    email: email.value,
-    password: password.value,
-  };
+const validateForm = () => {
+  errors.value = {};
+  if (!firstname.value) errors.value.firstname = 'Prénom requis';
+  if (!lastname.value) errors.value.lastname = 'Nom requis';
+  if (!username.value) errors.value.username = 'Nom d\'utilisateur requis';
+  if (!email.value) errors.value.email = 'E-mail requis';
+  if (!password.value) errors.value.password = 'Mot de passe requis';
+  return Object.keys(errors.value).length === 0;
+};
 
-  create(userData)
-    .then(response => {
-      console.log('Utilisateur inscrit:', response);
-      // Connexion automatique après inscription
-      return useFetchApiCrud('login').create({ email: email.value, password: password.value });
-    })
-    .then(response => {
-      console.log('Utilisateur connecté:', response);
-      localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
-      router.push('/parkings'); // Rediriger vers la page des parkings
-    })
-    .catch(err => {
-      console.error('Erreur lors de l\'inscription ou de la connexion:', err);
-      error.value = err;
-    });
+const handleSubmit = async () => {
+  if (!validateForm()) return;
+
+  try {
+    const userData = {
+      firstName: firstname.value,
+      lastName: lastname.value,
+      userName: username.value,
+      email: email.value,
+      password: password.value,
+    };
+
+    const response = await create(userData);
+    console.log('Utilisateur inscrit:', response);
+
+    // Connexion automatique après inscription
+    const loginResponse = await useFetchApiCrud('login').create({ email: email.value, password: password.value });
+    console.log('Utilisateur connecté:', loginResponse);
+
+    if (!loginResponse.token) {
+      throw new Error('Réponse de l\'API invalide : jeton non trouvé');
+    }
+
+    localStorage.setItem('token', loginResponse.token); // Stocker le token dans le localStorage
+    localStorage.setItem('user_id', response._id); // Stocker l'ID de l'utilisateur dans le localStorage
+    router.push('/addCar'); // Rediriger vers la page d'ajout de voiture
+  } catch (err) {
+    console.error('Erreur lors de l\'inscription ou de la connexion:', err);
+    if (err.response && err.response.data && err.response.data.message) {
+      error.value = err.response.data.message;
+    } else {
+      error.value = 'Une erreur est survenue lors de l\'inscription ou de la connexion.';
+    }
+  }
 };
 
 const goBack = () => {
@@ -222,7 +248,7 @@ const goBack = () => {
   color: red;
   font-size: 0.875rem;
   margin-top: 1vh;
-  text-align: center;
+  text-align: left;
 }
 
 @media (max-width: 1024px) {
