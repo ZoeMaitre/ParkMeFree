@@ -1,5 +1,7 @@
 import { ref } from 'vue';
 
+
+
 const defaultHeaders = {
     'Content-Type': 'application/json',
     'X-Requested-With': 'XMLHttpRequest',
@@ -33,8 +35,9 @@ export function setDefaultBaseUrl(url) {
  * @property {Function} fetchApiToRef - Function to fetch data and return it in refs
  */
 export function useFetchApi(baseUrl = null, additionalHeaders = {}) {
-    if (baseUrl === null) baseUrl = defaultBaseUrl;
-    if (baseUrl[baseUrl.length - 1] === '/') baseUrl = baseUrl.slice(0, -1);
+    const baseUrl = import.meta.env.VITE_API_URL;
+    // if (baseUrl === null) baseUrl = defaultBaseUrl;
+    // if (baseUrl[baseUrl.length - 1] === '/') baseUrl = baseUrl.slice(0, -1);
 
     const baseHeaders = { ...defaultHeaders, ...additionalHeaders };
 

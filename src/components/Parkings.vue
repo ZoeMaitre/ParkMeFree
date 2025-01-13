@@ -38,6 +38,7 @@ const { readAll } = useFetchApiCrud('parks');
 const parkings = ref([]);
 const searchQuery = ref('');
 const error = ref(null);
+const userPosition = ref(null);
 const router = useRouter();
 
 const fetchParkings = async () => {
