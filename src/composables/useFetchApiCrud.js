@@ -1,4 +1,4 @@
-import { useFetchApi } from './useFetchApi.js';
+import { useFetchApi } from "./useFetchApi.js";
 
 /**
  * Fetch data from an API and perform CRUD operations
@@ -16,54 +16,43 @@ import { useFetchApi } from './useFetchApi.js';
  * @example
  * const userCrud = useFetchApiCrud('users');
  */
-export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
+export function useFetchApiCrud(path) {
+    async function read(id) {
 
-    const { fetchApi } = useFetchApi(baseUrl, additionalHeaders);
-
-    function read(id, headers = {}, timeout = 5000) {
-        return fetchApi({
-            url: `${path}/${id}`,
-            method: 'GET',
-            headers,
-            timeout,
+        return await useFetchApi({
+            method: "GET",
+            endpoint: `${path}/${id}`,
         });
     }
 
-    function readAll(headers = {}, timeout = 5000) {
-        return fetchApi({
-            url: `${path}/`,
-            method: 'GET',
-            headers,
-            timeout,
+    async function readAll() {
+        return await useFetchApi({
+            method: "GET",
+            endpoint: path,
         });
     }
 
-    function create(data, headers = {}, timeout = 5000) {
-        return fetchApi({
-            url: path,
+    async function create(data) {
+        console.log("create", path, data);
+        return await useFetchApi({
+            method: "POST",
+            endpoint: path,
             data,
-            method: 'POST',
-            headers,
-            timeout,
         });
     }
 
-    function del(id, headers = {}, timeout = 5000) {
-        return fetchApi({
-            url: `${path}/${id}`,
-            method: 'DELETE',
-            headers,
-            timeout,
+    async function del(id) {
+        return await useFetchApi({
+            method: "DELETE",
+            endpoint: `${path}/${id}`,
         });
     }
 
-    function update(id, data, headers = {}, timeout = 5000) {
-        return fetchApi({
-            url: `${path}/${id}`,
+    async function update(id, data) {
+        return await useFetchApi({
+            method: "PATCH",
+            endpoint: `${path}/${id}`,
             data,
-            method: 'PATCH',
-            headers,
-            timeout,
         });
     }
 
@@ -73,6 +62,5 @@ export function useFetchApiCrud(path, baseUrl = null, additionalHeaders = {}) {
         create,
         del,
         update,
-        fetchApi
     };
 }

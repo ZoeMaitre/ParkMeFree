@@ -5,23 +5,11 @@
     <form @submit.prevent="loginUser" class="login-form">
       <div class="form-group">
         <label for="email" class="label">E-mail</label>
-        <input
-          type="email"
-          id="email"
-          v-model="email"
-          required
-          class="input"
-        />
+        <input type="email" id="email" v-model="email" required class="input" />
       </div>
       <div class="form-group">
         <label for="password" class="label">Mot de passe</label>
-        <input
-          type="password"
-          id="password"
-          v-model="password"
-          required
-          class="input"
-        />
+        <input type="password" id="password" v-model="password" required class="input" />
       </div>
       <div class="button-group">
         <div class="back-icon-wrapper" @click="goBack">
@@ -46,13 +34,13 @@ const email = ref('');
 const password = ref('');
 const error = ref(null);
 
-const loginUser = () => {
+const loginUser = async () => {
   const loginData = {
     email: email.value,
     password: password.value,
   };
 
-  create(loginData)
+  await create(loginData)
     .then(response => {
       console.log('Utilisateur connecté:', response);
       localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
@@ -76,7 +64,8 @@ const goBack = () => {
   height: 100%;
   position: relative;
   background-color: #a9c8c9;
-  overflow: hidden; /* Permettre le défilement */
+  overflow: hidden;
+  /* Permettre le défilement */
   text-align: center;
   font-size: 16px;
   color: #d9d9d9;
@@ -93,7 +82,8 @@ const goBack = () => {
   top: 30vh;
   left: 0;
   backdrop-filter: blur(4px);
-  border-top-left-radius: 25px; /* Arrondir les bords en haut à gauche */
+  border-top-left-radius: 25px;
+  /* Arrondir les bords en haut à gauche */
   border-top-right-radius: 25px;
   background-color: #d9d9d9;
   width: 100%;
@@ -125,7 +115,8 @@ const goBack = () => {
   width: 90%;
   max-width: 320px;
   z-index: 2;
-  margin-top: 15vh; /* Déplace le formulaire vers le bas */
+  margin-top: 15vh;
+  /* Déplace le formulaire vers le bas */
 }
 
 /* Groupe de champs */
@@ -170,7 +161,8 @@ const goBack = () => {
   align-items: center;
   justify-content: center;
   font-size: 1.2em;
-  margin: 10px auto; /* Centrer le bouton */
+  margin: 10px auto;
+  /* Centrer le bouton */
   background-color: #68a2a4;
   border: 1px solid #68a2a4;
   color: #fffaf5;
@@ -187,17 +179,20 @@ const goBack = () => {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px; /* Espace entre les boutons */
+  gap: 10px;
+  /* Espace entre les boutons */
   width: 100%;
   max-width: 320px;
-  margin: 10px auto; /* Centrer le groupe de boutons */
+  margin: 10px auto;
+  /* Centrer le groupe de boutons */
 }
 
 /* Icône de retour */
 .back-icon-wrapper {
   width: 40px;
   height: 40px;
-  background-color: #A9C8C9; /* Vert foncé */
+  background-color: #A9C8C9;
+  /* Vert foncé */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -206,8 +201,10 @@ const goBack = () => {
 }
 
 .back-icon {
-  font-size: 24px; /* Ajustez la taille de l'icône si nécessaire */
-  color: white; /* Couleur de l'icône */
+  font-size: 24px;
+  /* Ajustez la taille de l'icône si nécessaire */
+  color: white;
+  /* Couleur de l'icône */
 }
 
 /* Message d'erreur */
@@ -222,41 +219,50 @@ const goBack = () => {
   .label {
     font-size: 1rem;
   }
-  .background{
+
+  .background {
     top: 30vh;
     height: 80%;
   }
+
   .input {
     font-size: 0.9rem;
   }
+
   .submit-button {
     width: 60vw;
     height: 8vh;
   }
+
   .title {
     font-size: 8vw;
   }
-  
+
 }
 
 @media (max-width: 768px) {
   .label {
     font-size: 0.9rem;
   }
-  .background{
+
+  .background {
     top: 25vh;
     height: 80%;
   }
+
   .input {
     font-size: 0.8rem;
   }
+
   .submit-button {
     width: 70vw;
     height: 8vh;
   }
+
   .title {
     font-size: 10vw;
   }
+
   .login-form {
     margin-top: 5vh;
   }
