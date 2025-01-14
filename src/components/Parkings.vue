@@ -10,8 +10,8 @@
       </div>
     </div>
     <div class="cards-container">
-      <div v-for="parking in filteredParkings" :key="parking._id" class="parking-card" @click="goToDetail(parking._id)">
-        <div class="parking-image-container">
+      <div v-for="parking in filteredParkings" :key="parking._id" class="parking-card">
+        <div class="parking-image-container" @click="goToDetail(parking._id)">
           <img :src="parking.picture" alt="Parking Image" class="parking-image">
         </div>
         <div class="parking-info">
@@ -21,7 +21,7 @@
           </div>
           <div class="parking-capacity">Capacité: {{ parking.capacity }} place{{ parking.capacity > 1 ? 's' : '' }}</div>
           <div class="parking-free-time">Temps gratuit: {{ parking.freeTime }} heure{{ parking.freeTime > 1 ? 's' : '' }}</div>
-          <button class="parking-button">Me parquer</button>
+          <button class="parking-button" @click="createParkingSession(parking._id)">Me parquer</button>
         </div>
       </div>
     </div>
@@ -35,10 +35,11 @@ import { useRouter } from 'vue-router';
 import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
 
 const { readAll } = useFetchApiCrud('parks');
+const { read: readUser } = useFetchApiCrud('users');
 const parkings = ref([]);
 const searchQuery = ref('');
 const error = ref(null);
-const userPosition = ref(null);
+const user = ref({});
 const router = useRouter();
 
 const fetchParkings = async () => {
@@ -80,6 +81,60 @@ const goToDetail = (id) => {
     router.push({ name: 'ParkingDetail', params: { id } });
   } else {
     console.error('ID du parking manquant');
+  }
+};
+
+const fetchUserDetail = async (userId) => {
+  try {
+    const data = await readUser(userId);
+    user.value = data;
+  } catch (err) {
+    console.error('Erreur lors de la récupération des détails de l\'utilisateur:', err);
+  }
+};
+
+const createParkingSession = async (parkingId) => {
+  try {
+    const token = localStorage.getItem('token'); // Récupérez le jeton d'authentification depuis le local storage
+    const userId = localStorage.getItem('user_id'); // Récupérez l'ID de l'utilisateur depuis le local storage
+    if (!token || !userId) {
+      throw new Error('Jeton d\'authentification ou ID utilisateur non trouvé');
+    }
+
+    await fetchUserDetail(userId); // Récupérez les détails de l'utilisateur
+    const carId = user.value.car_id; // Récupérez l'ID de la voiture depuis les détails de l'utilisateur
+
+    if (!carId) {
+      throw new Error('ID de la voiture non trouvé');
+    }
+
+    const apiUrl = import.meta.env.VITE_API_URL; // Utilisez l'URL de base définie dans les variables d'environnement
+
+    const response = await fetch(`${apiUrl}/parkingSessions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        start_time: new Date(),
+        end_time: new Date(new Date().getTime() + 2 * 60 * 60 * 1000), // 2 heures plus tard
+        park_id: parkingId,
+        user_id: userId, // Utilisez l'ID de l'utilisateur actuel
+        car_id: carId, // Utilisez l'ID de la voiture actuelle
+        geolocation: parkings.value.find(parking => parking._id === parkingId).geolocation
+      })
+    });
+    const responseText = await response.text(); // Lire la réponse en tant que texte brut
+    console.log('Réponse brute du serveur:', responseText); // Afficher la réponse brute dans la console
+    if (!response.ok) {
+      throw new Error(`Erreur lors de la création de la session de parking: ${responseText}`);
+    }
+    const data = JSON.parse(responseText); // Parser la réponse en JSON
+    console.log('Session de parking créée:', data);
+    router.push('/parkingSession'); // Rediriger vers la page de session de parking
+  } catch (err) {
+    console.error('Erreur:', err);
   }
 };
 
