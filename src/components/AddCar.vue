@@ -37,6 +37,7 @@
   
   const router = useRouter();
   const { create } = useFetchApiCrud('cars/create');
+  const { update } = useFetchApiCrud('users/update');
   
   const model = ref('');
   const height = ref(0);
@@ -63,8 +64,9 @@
       };
   
       const token = localStorage.getItem('token'); // Récupérez le jeton d'authentification depuis le local storage
-      if (!token) {
-        throw new Error('Jeton d\'authentification non trouvé');
+      const userId = localStorage.getItem('user_id'); // Récupérez l'ID de l'utilisateur depuis le local storage
+      if (!token || !userId) {
+        throw new Error('Jeton d\'authentification ou ID utilisateur non trouvé');
       }
   
       const response = await create(carData, {
@@ -76,6 +78,19 @@
   
       if (!response._id) {
         throw new Error('Réponse de l\'API invalide : ID voiture non trouvé');
+      }
+  
+      // Mettre à jour l'utilisateur avec l'ID de la voiture
+      const updateResponse = await update(userId, { car_id: response._id }, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+  
+      console.log('Réponse de mise à jour de l\'utilisateur:', updateResponse);
+  
+      if (!updateResponse || !updateResponse._id) {
+        throw new Error(`Erreur lors de la mise à jour de l'utilisateur: ${updateResponse.statusText || 'Statut inconnu'}`);
       }
   
       localStorage.setItem('car_id', response._id); // Stocker l'ID de la voiture dans le localStorage
@@ -90,6 +105,7 @@
     router.back();
   };
   </script>
+  
   
   <style scoped>
   .add-car-container {

@@ -40,16 +40,16 @@ const loginUser = async () => {
     password: password.value,
   };
 
-  await create(loginData)
-    .then(response => {
-      console.log('Utilisateur connecté:', response);
-      localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
-      router.push('/parkings'); // Rediriger vers la page des parkings
-    })
-    .catch(err => {
-      console.error('Erreur lors de la connexion:', err);
-      error.value = err;
-    });
+  try {
+    const response = await create(loginData);
+    console.log('Utilisateur connecté:', response);
+    localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
+    localStorage.setItem('user_id', response.id); // Stocker l'ID de l'utilisateur dans le localStorage
+    router.push('/parkings'); // Rediriger vers la page des parkings
+  } catch (err) {
+    console.error('Erreur lors de la connexion:', err);
+    error.value = err;
+  }
 };
 
 const goBack = () => {

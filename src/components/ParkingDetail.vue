@@ -41,8 +41,10 @@ import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
 const route = useRoute();
 const router = useRouter();
 const parking = ref({});
+const user = ref({});
 
 const { read } = useFetchApiCrud('parks');
+const { read: readUser } = useFetchApiCrud('users');
 
 const fetchParkingDetail = async (id) => {
   try {
@@ -51,6 +53,15 @@ const fetchParkingDetail = async (id) => {
     parking.value = { ...data, address };
   } catch (err) {
     console.error('Erreur lors de la récupération des détails du parking:', err);
+  }
+};
+
+const fetchUserDetail = async (userId) => {
+  try {
+    const data = await readUser(userId);
+    user.value = data;
+  } catch (err) {
+    console.error('Erreur lors de la récupération des détails de l\'utilisateur:', err);
   }
 };
 
@@ -69,12 +80,20 @@ const createParkingSession = async () => {
   try {
     const token = localStorage.getItem('token'); // Récupérez le jeton d'authentification depuis le local storage
     const userId = localStorage.getItem('user_id'); // Récupérez l'ID de l'utilisateur depuis le local storage
-    const carId = localStorage.getItem('car_id'); // Récupérez l'ID de la voiture depuis le local storage
-    if (!token || !userId || !carId) {
-      throw new Error('Jeton d\'authentification, ID utilisateur ou ID voiture non trouvé');
+    if (!token || !userId) {
+      throw new Error('Jeton d\'authentification ou ID utilisateur non trouvé');
     }
 
-    const response = await fetch('http://localhost:5173/api/parkingSessions', {
+    await fetchUserDetail(userId); // Récupérez les détails de l'utilisateur
+    const carId = user.value.car_id; // Récupérez l'ID de la voiture depuis les détails de l'utilisateur
+
+    if (!carId) {
+      throw new Error('ID de la voiture non trouvé');
+    }
+
+    const apiUrl = import.meta.env.VITE_API_URL; // Utilisez l'URL de base définie dans les variables d'environnement
+
+    const response = await fetch(`${apiUrl}/parkingSessions`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

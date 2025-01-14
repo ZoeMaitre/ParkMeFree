@@ -50,7 +50,7 @@ export function useFetchApiCrud(path) {
 
     async function update(id, data) {
         return await useFetchApi({
-            method: "PATCH",
+            method: "PUT",
             endpoint: `${path}/${id}`,
             data,
         });
