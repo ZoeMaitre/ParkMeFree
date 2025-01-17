@@ -10,8 +10,8 @@
       </div>
     </div>
     <div class="cards-container">
-      <div v-for="parking in filteredParkings" :key="parking._id" class="parking-card">
-        <div class="parking-image-container" @click="goToDetail(parking._id)">
+      <div v-for="parking in sortedParkings" :key="parking._id" class="parking-card" @click="goToDetail(parking._id)">
+        <div class="parking-image-container">
           <img :src="parking.picture" alt="Parking Image" class="parking-image">
         </div>
         <div class="parking-info">
@@ -21,7 +21,7 @@
           </div>
           <div class="parking-capacity">Capacité: {{ parking.capacity }} place{{ parking.capacity > 1 ? 's' : '' }}</div>
           <div class="parking-free-time">Temps gratuit: {{ parking.freeTime }} heure{{ parking.freeTime > 1 ? 's' : '' }}</div>
-          <button class="parking-button" @click="createParkingSession(parking._id)">Me parquer</button>
+          <button class="parking-button" @click.stop="createParkingSession(parking._id)">Me parquer</button>
         </div>
       </div>
     </div>
@@ -40,6 +40,7 @@ const parkings = ref([]);
 const searchQuery = ref('');
 const error = ref(null);
 const user = ref({});
+const userLocation = ref(null);
 const router = useRouter();
 
 const fetchParkings = async () => {
@@ -65,10 +66,42 @@ const getAddressFromCoordinates = async (lat, lng) => {
   }
 };
 
-const filteredParkings = computed(() => {
-  return parkings.value.filter(parking => 
-    parking.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+const getUserLocation = () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(position => {
+      userLocation.value = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+    }, err => {
+      console.error('Erreur lors de la récupération de la localisation de l\'utilisateur:', err);
+    });
+  } else {
+    console.error('La géolocalisation n\'est pas supportée par ce navigateur.');
+  }
+};
+
+const calculateDistance = (lat1, lng1, lat2, lng2) => {
+  const toRad = x => x * Math.PI / 180;
+  const R = 6371; // Rayon de la Terre en km
+  const dLat = toRad(lat2 - lat1);
+  const dLng = toRad(lng2 - lng1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+};
+
+const sortedParkings = computed(() => {
+  if (!userLocation.value) return parkings.value;
+  return parkings.value
+    .map(parking => ({
+      ...parking,
+      distance: calculateDistance(userLocation.value.lat, userLocation.value.lng, parking.geolocation[0], parking.geolocation[1])
+    }))
+    .sort((a, b) => a.distance - b.distance)
+    .filter(parking => parking.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
 });
 
 const logoutUser = () => {
@@ -140,6 +173,7 @@ const createParkingSession = async (parkingId) => {
 
 onMounted(() => {
   fetchParkings();
+  getUserLocation();
 });
 </script>
 
