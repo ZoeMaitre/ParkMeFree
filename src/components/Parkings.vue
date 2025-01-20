@@ -20,17 +20,9 @@
           <div class="parking-location">
             <span>{{ parking.address }}</span>
           </div>
-<<<<<<< HEAD
-          <div class="parking-capacity">Capacité: {{ parking.capacity }} place{{ parking.capacity > 1 ? 's' : '' }}
-          </div>
-          <div class="parking-free-time">Temps gratuit: {{ parking.freeTime }} heure{{ parking.freeTime > 1 ? 's' : ''
-            }}</div>
-          <button class="parking-button" @click="createParkingSession(parking._id)">Me parquer</button>
-=======
           <div class="parking-capacity">Capacité: {{ parking.capacity }} place{{ parking.capacity > 1 ? 's' : '' }}</div>
           <div class="parking-free-time">Temps gratuit: {{ parking.freeTime }} heure{{ parking.freeTime > 1 ? 's' : '' }}</div>
           <button class="parking-button" @click.stop="createParkingSession(parking._id)">Me parquer</button>
->>>>>>> e8ca8dc0941ca02f451042124f9596a7b67850c9
         </div>
       </div>
     </div>
@@ -79,12 +71,6 @@ const getAddressFromCoordinates = async (lat, lng) => {
   }
 };
 
-<<<<<<< HEAD
-const filteredParkings = computed(() => {
-  return parkings.value.filter(parking =>
-    parking.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
-=======
 const getUserLocation = () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(position => {
@@ -121,7 +107,6 @@ const sortedParkings = computed(() => {
     }))
     .sort((a, b) => a.distance - b.distance)
     .filter(parking => parking.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
->>>>>>> e8ca8dc0941ca02f451042124f9596a7b67850c9
 });
 
 const logoutUser = () => {
