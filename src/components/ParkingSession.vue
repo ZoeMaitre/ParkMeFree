@@ -19,9 +19,28 @@
   const countdown = ref('');
   let intervalId;
   
+  const sendNotification = async (token, message) => {
+    try {
+      const response = await fetch('/api/notifications/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, message }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Erreur lors de l\'envoi de la notification');
+      }
+      console.log('Notification envoyée:', data);
+    } catch (error) {
+      console.error('Erreur lors de l\'envoi de la notification:', error);
+    }
+  };
+  
   const calculateCountdown = () => {
     const endTime = new Date(new Date().getTime() + remainingTime.value * 60 * 1000);
-    intervalId = setInterval(() => {
+    intervalId = setInterval(async () => {
       const now = new Date().getTime();
       const distance = endTime - now;
   
@@ -34,15 +53,21 @@
       if (distance < 0) {
         clearInterval(intervalId);
         countdown.value = 'Temps gratuit terminé';
+  
+        // Envoyer une notification lorsque le temps gratuit est terminé
+        const token = localStorage.getItem('notification_token'); // Récupérez le token de notification depuis le local storage
+        if (token) {
+          await sendNotification(token, 'Votre temps gratuit est terminé.');
+        }
       }
     }, 1000);
   };
-  
+
   const endParkingSession = () => {
-    // Logique pour terminer la session de parking
-    console.log('Fin de la session de parking');
-    router.push('/parkings'); // Rediriger vers la page des parkings
-  };
+  clearInterval(intervalId);
+  countdown.value = 'Parking terminé';
+  router.push('/parkings'); // Rediriger vers la page des parkings
+};
   
   onMounted(() => {
     calculateCountdown();

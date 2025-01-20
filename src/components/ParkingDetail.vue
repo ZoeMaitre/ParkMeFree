@@ -21,7 +21,7 @@
             </div>
             <div class="detail-item">
               <p class="label">Hauteur</p>
-              <p class="value">{{ parking.height }} mètres</p>
+              <p class="value">{{ parking.height === 0 || parking.height === null ? 'Parking en plein air' : `${parking.height} mètres` }}</p>
             </div>
           </div>
           <div class="button-container">
