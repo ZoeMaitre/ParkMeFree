@@ -6,6 +6,7 @@ import Parkings from '../components/Parkings.vue';
 import ParkingDetail from '../components/ParkingDetail.vue';
 import AddCar from '../components/AddCar.vue';
 import ParkingSession from '../components/ParkingSession.vue';
+import CreateParkings from '../components/CreateParkings.vue';
 
 const routes = [
     {
@@ -46,6 +47,12 @@ const routes = [
         path: '/parkingSession',
         name: 'ParkingSession',
         component: ParkingSession,
+        meta: { requiresAuth: true }
+    },
+    {
+        path: '/CreateParkings',
+        name: 'CreateParkings',
+        component: CreateParkings,
         meta: { requiresAuth: true }
     }
 ];

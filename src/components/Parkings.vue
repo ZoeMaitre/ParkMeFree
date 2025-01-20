@@ -8,6 +8,7 @@
       <div class="logout-icon-wrapper" @click="logoutUser">
         <img src="/LogOut.svg" alt="Logout Icon" class="logout-icon" />
       </div>
+      <button class="create-parking-button" @click="goToCreateParking">Créer un Parking</button>
     </div>
     <div class="cards-container">
       <div v-for="parking in filteredParkings" :key="parking._id" class="parking-card">
@@ -19,8 +20,10 @@
           <div class="parking-location">
             <span>{{ parking.address }}</span>
           </div>
-          <div class="parking-capacity">Capacité: {{ parking.capacity }} place{{ parking.capacity > 1 ? 's' : '' }}</div>
-          <div class="parking-free-time">Temps gratuit: {{ parking.freeTime }} heure{{ parking.freeTime > 1 ? 's' : '' }}</div>
+          <div class="parking-capacity">Capacité: {{ parking.capacity }} place{{ parking.capacity > 1 ? 's' : '' }}
+          </div>
+          <div class="parking-free-time">Temps gratuit: {{ parking.freeTime }} heure{{ parking.freeTime > 1 ? 's' : ''
+            }}</div>
           <button class="parking-button" @click="createParkingSession(parking._id)">Me parquer</button>
         </div>
       </div>
@@ -54,6 +57,10 @@ const fetchParkings = async () => {
   }
 };
 
+const goToCreateParking = () => {
+  router.push('/createParkings');
+};
+
 const getAddressFromCoordinates = async (lat, lng) => {
   const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
   const data = await response.json();
@@ -66,7 +73,7 @@ const getAddressFromCoordinates = async (lat, lng) => {
 };
 
 const filteredParkings = computed(() => {
-  return parkings.value.filter(parking => 
+  return parkings.value.filter(parking =>
     parking.name.toLowerCase().includes(searchQuery.value.toLowerCase())
   );
 });
@@ -144,26 +151,31 @@ onMounted(() => {
 </script>
 
 <style scoped>
-body, html {
+body,
+html {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: #d9d9d9; /* Fond gris partout */
+  background-color: #d9d9d9;
+  /* Fond gris partout */
 }
 
 .home {
   width: 100%;
   min-height: 100vh;
-  background-color: #d9d9d9; /* Fond gris partout */
+  background-color: #d9d9d9;
+  /* Fond gris partout */
   overflow: hidden;
   text-align: left;
   font-size: 12px;
   color: #68a2a4;
   font-family: 'Lexend', sans-serif;
   display: flex;
-  flex-direction: column; /* Aligner les éléments verticalement */
-  align-items: center; /* Centrer les éléments horizontalement */
+  flex-direction: column;
+  /* Aligner les éléments verticalement */
+  align-items: center;
+  /* Centrer les éléments horizontalement */
   padding: 20px;
   box-sizing: border-box;
 }
@@ -171,7 +183,8 @@ body, html {
 .search-container {
   width: 100%;
   display: flex;
-  justify-content: center; /* Centrer la barre de recherche */
+  justify-content: center;
+  /* Centrer la barre de recherche */
   margin-bottom: 20px;
 }
 
@@ -186,7 +199,8 @@ body, html {
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
-  width: 20px; /* Ajustez la taille de l'icône si nécessaire */
+  width: 20px;
+  /* Ajustez la taille de l'icône si nécessaire */
   height: 20px;
 }
 
@@ -196,7 +210,8 @@ body, html {
   top: 20px;
   width: 40px;
   height: 40px;
-  background-color: #ff0000; /* Vert foncé */
+  background-color: #ff0000;
+  /* Vert foncé */
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -205,29 +220,51 @@ body, html {
 }
 
 .logout-icon {
-  width: 20px; /* Ajustez la taille de l'icône si nécessaire */
+  width: 20px;
+  /* Ajustez la taille de l'icône si nécessaire */
   height: 20px;
+}
+
+.create-parking-button {
+  position: absolute;
+  right: 100px;
+  top: 0px;
+  height: 40px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #68a2a4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .search-bar {
   width: 100%;
-  padding: 10px 40px 10px 40px; /* Espace pour les icônes de loupe et de déconnexion */
-  border: 1px solid #68a2a4; /* Contour vert */
+  padding: 10px 40px 10px 40px;
+  /* Espace pour les icônes de loupe et de déconnexion */
+  border: 1px solid #68a2a4;
+  /* Contour vert */
   border-radius: 20px;
   font-size: 16px;
   box-sizing: border-box;
-  background-color: transparent; /* Fond transparent */
-  color: #68a2a4; /* Texte vert */
+  background-color: transparent;
+  /* Fond transparent */
+  color: #68a2a4;
+  /* Texte vert */
 }
 
 .search-bar::placeholder {
-  color: #68a2a4; /* Couleur du placeholder en vert */
+  color: #68a2a4;
+  /* Couleur du placeholder en vert */
 }
 
 .cards-container {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-start; /* Aligner les cartes en haut */
+  justify-content: flex-start;
+  /* Aligner les cartes en haut */
   width: 100%;
 }
 
@@ -237,18 +274,23 @@ body, html {
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.13);
   margin: 10px;
   overflow: hidden;
-  flex: 1 1 calc(33.333% - 20px); /* 3 cartes par ligne */
+  flex: 1 1 calc(33.333% - 20px);
+  /* 3 cartes par ligne */
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  max-width: 450px; /* Taille maximale des cartes */
-  height: 200px; /* Hauteur fixe des cartes */
-  cursor: pointer; /* Ajouter un curseur pointeur pour indiquer que la carte est cliquable */
+  max-width: 450px;
+  /* Taille maximale des cartes */
+  height: 200px;
+  /* Hauteur fixe des cartes */
+  cursor: pointer;
+  /* Ajouter un curseur pointeur pour indiquer que la carte est cliquable */
 }
 
 .parking-image-container {
   width: 150px;
-  height: 100%; /* Hauteur de l'image égale à la hauteur de la carte */
+  height: 100%;
+  /* Hauteur de l'image égale à la hauteur de la carte */
   overflow: hidden;
 }
 
@@ -263,7 +305,8 @@ body, html {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centrer verticalement le contenu */
+  justify-content: center;
+  /* Centrer verticalement le contenu */
 }
 
 .parking-name {
@@ -306,13 +349,15 @@ body, html {
 
 @media (max-width: 1024px) {
   .parking-card {
-    flex: 1 1 calc(50% - 20px); /* 2 cartes par ligne sur tablette */
+    flex: 1 1 calc(50% - 20px);
+    /* 2 cartes par ligne sur tablette */
   }
 }
 
 @media (max-width: 768px) {
   .parking-card {
-    flex: 1 1 100%; /* 1 carte par ligne sur mobile */
+    flex: 1 1 100%;
+    /* 1 carte par ligne sur mobile */
   }
 }
 </style>
