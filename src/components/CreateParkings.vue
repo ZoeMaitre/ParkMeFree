@@ -1,7 +1,7 @@
 <template>
     <div class="add-parkings-container">
-        <div class="background"></div>
         <div class="title">Créer un Parking</div>
+        <div class="background"></div>
         <form @submit.prevent="handleSubmit" class="add-parkings-form">
             <div class="form-group">
                 <label for="name" class="label">Nom du parking:</label>
@@ -76,25 +76,27 @@ const handleImageUpload = (event) => {
 const handleSubmit = async () => {
     if (!validateForm()) return;
 
+    console.log('submit');
     try {
-        const parkingData = {
-            name: name.value,
-            geolocation: geolocation.value,
-            capacity: capacity.value,
-            freeTime: freeTime.value,
-            height: height.value,
-            picture: picture.value
-        };
+        const formData = new FormData();
+        formData.append('name', name.value);
+        formData.append('geolocation', geolocation.value);
+        formData.append('capacity', capacity.value);
+        formData.append('freeTime', freeTime.value);
+        formData.append('height', height.value);
+        formData.append('picture', picture.value);
+
 
         const token = localStorage.getItem('token');
         const userId = localStorage.getItem('user_id');
-        if (!token) {
+        if (!token || !userId) {
             throw new Error('Jeton d\'authentification non trouvé');
         }
 
-        const response = await create(parkingData, {
+        const response = await create(FormData, {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
             }
 
         });
