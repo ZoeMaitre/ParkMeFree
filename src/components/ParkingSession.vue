@@ -4,7 +4,7 @@
     <div class="background"></div>
     <div class="content">
       <h1>Vous êtes parqué</h1>
-      <p>Vous avez encore <span>{{ countdown }}</span> jusqu'à la fin du temps gratuit.</p>
+      <p>{{ countdownMessage }}</p>
       <button @click="endParkingSession" class="end-parking-button">Fin du parking</button>
     </div>
   </div>
@@ -17,7 +17,7 @@ import { useFetchApi } from '../composables/useFetchApi.js';
 
 const router = useRouter();
 const route = useRoute();
-const countdown = ref('');
+const countdownMessage = ref('');
 let intervalId;
 
 const notificationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzU5YTg4OTNkNWEyOTAzNTYwMzc5OTAiLCJleHAiOjE3MzQ1MzQwMDcsImlhdCI6MTczMzkyOTIwN30.mF_51SZVPYfA63jnOh-zMRKrSFYfRM2NZl-8m2KubDM';
@@ -45,14 +45,12 @@ const calculateCountdown = (remainingTime) => {
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-    countdown.value = `${hours}h ${minutes}m ${seconds}s`;
-
     if (distance < 0) {
       clearInterval(intervalId);
-      countdown.value = 'Il n\'y a plus de temps gratuit disponible';
-
-      // Envoyer une notification lorsque le temps gratuit est terminé
+      countdownMessage.value = 'Il n\'y a plus de temps gratuit disponible';
       await sendNotification(notificationToken, 'Votre temps gratuit est terminé.');
+    } else {
+      countdownMessage.value = `Vous avez encore ${hours}h ${minutes}m ${seconds}s jusqu'à la fin du temps gratuit.`;
     }
   }, 1000);
 };
@@ -64,7 +62,7 @@ const startParkingSession = () => {
 
 const endParkingSession = () => {
   clearInterval(intervalId);
-  countdown.value = 'Parking terminé';
+  countdownMessage.value = 'Parking terminé';
   router.push('/parkings'); // Rediriger vers la page des parkings
 };
 

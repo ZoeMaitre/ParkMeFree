@@ -74,7 +74,6 @@
           'Authorization': `Bearer ${token}`
         }
       });
-      console.log('Voiture ajoutée:', response);
   
       if (!response._id) {
         throw new Error('Réponse de l\'API invalide : ID voiture non trouvé');
@@ -86,9 +85,7 @@
           'Authorization': `Bearer ${token}`
         }
       });
-  
-      console.log('Réponse de mise à jour de l\'utilisateur:', updateResponse);
-  
+    
       if (!updateResponse || !updateResponse._id) {
         throw new Error(`Erreur lors de la mise à jour de l'utilisateur: ${updateResponse.statusText || 'Statut inconnu'}`);
       }

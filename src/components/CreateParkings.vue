@@ -76,7 +76,6 @@ const handleImageUpload = (event) => {
 const handleSubmit = async () => {
     if (!validateForm()) return;
 
-    console.log('submit');
     try {
         const formData = new FormData();
         formData.append('name', name.value);
@@ -100,7 +99,6 @@ const handleSubmit = async () => {
             }
 
         });
-        console.log('Parking crée:', response);
         if (!response.ok) {
             throw new Error('Réponse de l\'API invalide : ID voiture non trouvé');
         }

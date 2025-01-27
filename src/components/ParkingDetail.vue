@@ -109,12 +109,10 @@ const createParkingSession = async () => {
       })
     });
     const responseText = await response.text(); // Lire la réponse en tant que texte brut
-    console.log('Réponse brute du serveur:', responseText); // Afficher la réponse brute dans la console
     if (!response.ok) {
       throw new Error(`Erreur lors de la création de la session de parking: ${responseText}`);
     }
     const data = JSON.parse(responseText); // Parser la réponse en JSON
-    console.log('Session de parking créée:', data);
     router.push({ name: 'ParkingSession', params: { id: parking.value._id, freeTime: parking.value.freeTime } });
   } catch (err) {
     console.error('Erreur:', err);

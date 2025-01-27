@@ -78,11 +78,9 @@ const handleSubmit = async () => {
     };
 
     const response = await create(userData);
-    console.log('Utilisateur inscrit:', response);
 
     // Connexion automatique après inscription
     const loginResponse = await useFetchApiCrud('login').create({ email: email.value, password: password.value });
-    console.log('Utilisateur connecté:', loginResponse);
 
     if (!loginResponse.token) {
       throw new Error('Réponse de l\'API invalide : jeton non trouvé');

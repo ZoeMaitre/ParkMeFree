@@ -42,7 +42,6 @@ const loginUser = async () => {
 
   try {
     const response = await create(loginData);
-    console.log('Utilisateur connecté:', response);
     localStorage.setItem('token', response.token); // Stocker le token dans le localStorage
     localStorage.setItem('user_id', response.id); // Stocker l'ID de l'utilisateur dans le localStorage
     router.push('/parkings'); // Rediriger vers la page des parkings
