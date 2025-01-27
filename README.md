@@ -1,5 +1,54 @@
-# Vue 3 + Vite
+# ParkMeFree
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+ParkMeFree est une application de gestion de parkings développée avec Vue 3 et Vite.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## Prérequis
+
+Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
+
+- [Node.js](https://nodejs.org/) (version 14 ou supérieure)
+- [npm](https://www.npmjs.com/) (version 6 ou supérieure) ou [yarn](https://yarnpkg.com/)
+
+## Installation
+
+1. Clonez le dépôt :
+
+   \`\`\`bash
+   git clone https://github.com/votre-utilisateur/votre-repo.git
+   cd votre-repo
+   \`\`\`
+
+2. Installez les dépendances :
+
+   \`\`\`bash
+   npm install
+   \`\`\`
+
+## Configuration
+
+3. Créez un fichier `.env` à la racine du projet et ajoutez les variables d'environnement nécessaires. Vous pouvez utiliser le fichier `.env.example` comme modèle.
+
+   Exemple :
+
+   \`\`\`env
+   VITE_WS_URL=ws://localhost:3000
+   VITE_API_URL=https://parkmefree.onrender.com/api
+   \`\`\`
+
+## Utilisation
+
+Pour démarrer le serveur de développement, exécutez :
+
+\`\`\`bash
+npm run dev
+\`\`\`
+
+## Build
+
+Pour générer une version de production, exécutez :
+
+\`\`\`bash
+npm run build
+\`\`\`
+
+Les fichiers de build seront générés dans le dossier `dist`.
