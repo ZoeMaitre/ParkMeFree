@@ -7,14 +7,14 @@ ParkMeFree est une application de gestion de parkings développée avec Vue 3 et
 Avant de commencer, assurez-vous d'avoir les éléments suivants installés sur votre machine :
 
 - [Node.js](https://nodejs.org/) (version 14 ou supérieure)
-- [npm](https://www.npmjs.com/) (version 6 ou supérieure) ou [yarn](https://yarnpkg.com/)
+- [npm](https://www.npmjs.com/) (version 6 ou supérieure) 
 
 ## Installation
 
 1. Clonez le dépôt :
 
    \`\`\`bash
-   git clone https://github.com/votre-utilisateur/votre-repo.git
+   git clone https://github.com/ZoeMaitre/ParkMeFree.git
    cd votre-repo
    \`\`\`
 
