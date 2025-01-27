@@ -12,7 +12,7 @@
                 <input type="text" id="location" v-model="geolocation" class="input" required />
             </div>
             <div class="form-group">
-                <label for="height" class="label">Capacité:</label>
+                <label for="height" class="label">Hauteur:</label>
                 <input type="number" id="height" v-model="height" class="input" required />
             </div>
             <div class="form-group">
@@ -77,39 +77,36 @@ const handleSubmit = async () => {
     if (!validateForm()) return;
 
     try {
-        const formData = new FormData();
-        formData.append('name', name.value);
-        formData.append('location', geolocation.value);
-        formData.append('capacity', capacity.value);
-        formData.append('duration', freeTime.value);
-        formData.append('height', height.value);
-        formData.append('image', picture.value);
+        const parkingData = {
+            name: name.value,
+            geolocation: geolocation.value,
+            capacity: capacity.value,
+            freeTime: freeTime.value,
+            height: height.value,
+            picture: picture.value
+        };
 
         const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('user_id');
         if (!token) {
             throw new Error('Jeton d\'authentification non trouvé');
         }
 
-        const response = await fetch(import.meta.env.VITE_API_URL + '/parks/create', {
-
-            method: 'POST',
+        const response = await create(parkingData, {
             headers: {
                 'Authorization': `Bearer ${token}`
-            },
-            body: formData
+            }
+
         });
-
+        console.log('Parking crée:', response);
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            throw new Error('Réponse de l\'API invalide : ID voiture non trouvé');
         }
-
-        const result = await response.json();
-        console.log('Parking ajouté:', result);
-
-        router.push('/parkings');
+        localStorage.setItem('parks_id', response._id); // Stocker l'ID de le parking dans le localStorage
+        router.push('/parkings'); // Rediriger vers la page des parkings après l'ajout de la voiture
     } catch (err) {
         console.error('Erreur lors de l\'ajout du parking:', err);
-        error.value = err.message;
+        error.value = err;
     }
 };
 
