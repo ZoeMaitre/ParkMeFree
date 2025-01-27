@@ -274,6 +274,16 @@ body, html {
   .parking-detail, html, body {
     overflow: auto;
   }
+.detail-card{
+    margin-top: 130px;
+    width: 80%;
+    margin-bottom: 60px;
+}
+  .back-icon-wrapper{
+    top: 70px;
+  }
+
+
 }
 
 @media (min-width: 800px) {
@@ -293,5 +303,7 @@ body, html {
     width: 50%;
     padding-left: 20px;
   }
+
+
 }
 </style>

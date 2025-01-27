@@ -90,7 +90,7 @@ const calculateDistance = (lat1, lng1, lat2, lng2) => {
   const toRad = x => x * Math.PI / 180;
   const R = 6371; // Rayon de la Terre en km
   const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
+  const dLng = toRad(lat2 - lng1);
   const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
             Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
             Math.sin(dLng / 2) * Math.sin(dLng / 2);
@@ -146,8 +146,8 @@ const createParkingSession = async (parkingId) => {
       throw new Error('ID de la voiture non trouvé');
     }
 
-    const parking = await read(parkingId);
-    const freeTime = parking.freeTime;
+    const parking = await read(parkingId); // Récupérez les détails du parking
+    const freeTime = parking.freeTime; // Récupérez la durée du temps gratuit
 
     const apiUrl = import.meta.env.VITE_API_URL; // Utilisez l'URL de base définie dans les variables d'environnement
 
@@ -163,14 +163,18 @@ const createParkingSession = async (parkingId) => {
         park_id: parkingId,
         user_id: userId, // Utilisez l'ID de l'utilisateur actuel
         car_id: carId, // Utilisez l'ID de la voiture actuelle
-        geolocation: parkings.value.find(parking => parking._id === parkingId).geolocation
+        geolocation: parking.geolocation
       })
     });
     const responseText = await response.text(); // Lire la réponse en tant que texte brut
+    console.log('Réponse brute du serveur:', responseText); // Afficher la réponse brute dans la console
     if (!response.ok) {
       throw new Error(`Erreur lors de la création de la session de parking: ${responseText}`);
     }
     const data = JSON.parse(responseText); // Parser la réponse en JSON
+    console.log('Session de parking créée:', data);
+
+    // Rediriger vers la page de session de parking avec la durée du temps gratuit
     router.push({ name: 'ParkingSession', params: { id: parkingId, freeTime } });
   } catch (err) {
     console.error('Erreur:', err);
@@ -216,15 +220,15 @@ html {
 .search-container {
   width: 100%;
   display: flex;
-  justify-content: center;
-  /* Centrer la barre de recherche */
   margin-bottom: 20px;
+  align-items: center; /* Aligner les éléments verticalement */
 }
 
 .search-bar-wrapper {
   position: relative;
   width: 100%;
-  max-width: 350px;
+  max-width: 450px;
+  margin-left: 10px;
 }
 
 .search-icon {
@@ -238,9 +242,8 @@ html {
 }
 
 .logout-icon-wrapper {
-  position: absolute;
-  right: 20px;
-  top: 20px;
+  margin-left: auto; /* Aligner à droite */
+  margin-right: 20px; /* Espacement à droite */
   width: 40px;
   height: 40px;
   background-color: #ff0000;
@@ -259,11 +262,8 @@ html {
 }
 
 .create-parking-button {
-  position: absolute;
-  right: 100px;
-  top: 0px;
+  margin-left: 20px; /* Espacement à gauche */
   height: 40px;
-  margin-top: 20px;
   padding: 10px 20px;
   background-color: #68a2a4;
   color: white;
@@ -385,12 +385,33 @@ html {
     flex: 1 1 calc(50% - 20px);
     /* 2 cartes par ligne sur tablette */
   }
+  .search-container {
+    flex-direction: row; /* Aligner les éléments horizontalement sur tablette */
+    align-items: center; /* Aligner les éléments verticalement */
+  }
+  .create-parking-button {
+    margin-left: 20px; /* Espacement à gauche */
+    margin-top: 0; /* Réinitialiser l'espacement en haut */
+    width: auto; /* Réinitialiser la largeur */
+  }
 }
 
 @media (max-width: 768px) {
   .parking-card {
     flex: 1 1 100%;
     /* 1 carte par ligne sur mobile */
+  }
+  .search-container {
+    flex-wrap: wrap; 
+    margin-top: 15%;
+  }
+  .search-bar-wrapper{
+    width: 75%;
+  }
+  .create-parking-button {
+    margin-left: 10px; /* Réinitialiser l'espacement à gauche */
+    margin-top: 10px; /* Ajouter un espacement en haut */
+    width: 45%; /* Prendre toute la largeur */
   }
 }
 </style>
