@@ -1,7 +1,6 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 
 export async function useFetchApi({ method, endpoint, data }) {
-    console.log(method, endpoint, data);
     const token = localStorage.getItem("token") || "";
 
     try {

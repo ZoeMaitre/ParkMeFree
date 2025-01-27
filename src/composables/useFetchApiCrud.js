@@ -33,7 +33,6 @@ export function useFetchApiCrud(path) {
     }
 
     async function create(data) {
-        console.log("create", path, data);
         return await useFetchApi({
             method: "POST",
             endpoint: path,
