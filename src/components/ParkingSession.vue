@@ -1,82 +1,81 @@
 <template>
-    <div class="parking-session-container">
-      <div class="title">ParkMeFree</div>
-      <div class="background"></div>
-      <div class="content">
-        <h1>Vous êtes parqué</h1>
-        <p>Vous avez encore <span>{{ countdown }}</span> jusqu'à la fin du temps gratuit.</p>
-        <button @click="endParkingSession" class="end-parking-button">Fin du parking</button>
-      </div>
+  <div class="parking-session-container">
+    <div class="title">ParkMeFree</div>
+    <div class="background"></div>
+    <div class="content">
+      <h1>Vous êtes parqué</h1>
+      <p>Vous avez encore <span>{{ countdown }}</span> jusqu'à la fin du temps gratuit.</p>
+      <button @click="endParkingSession" class="end-parking-button">Fin du parking</button>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, onMounted, onUnmounted } from 'vue';
-  import { useRouter } from 'vue-router';
-  
-  const router = useRouter();
-  const remainingTime = ref(120); // 120 minutes de temps gratuit
-  const countdown = ref('');
-  let intervalId;
-  
-  const sendNotification = async (token, message) => {
-    try {
-      const response = await fetch('/api/notifications/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token, message }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Erreur lors de l\'envoi de la notification');
-      }
-      console.log('Notification envoyée:', data);
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi de la notification:', error);
-    }
-  };
-  
-  const calculateCountdown = () => {
-    const endTime = new Date(new Date().getTime() + remainingTime.value * 60 * 1000);
-    intervalId = setInterval(async () => {
-      const now = new Date().getTime();
-      const distance = endTime - now;
-  
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-  
-      countdown.value = `${hours}h ${minutes}m ${seconds}s`;
-  
-      if (distance < 0) {
-        clearInterval(intervalId);
-        countdown.value = 'Temps gratuit terminé';
-  
-        // Envoyer une notification lorsque le temps gratuit est terminé
-        const token = localStorage.getItem('notification_token'); // Récupérez le token de notification depuis le local storage
-        if (token) {
-          await sendNotification(token, 'Votre temps gratuit est terminé.');
-        }
-      }
-    }, 1000);
-  };
+  </div>
+</template>
 
-  const endParkingSession = () => {
+<script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useFetchApi } from '../composables/useFetchApi.js';
+
+const router = useRouter();
+const route = useRoute();
+const countdown = ref('');
+let intervalId;
+
+const notificationToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NzU5YTg4OTNkNWEyOTAzNTYwMzc5OTAiLCJleHAiOjE3MzQ1MzQwMDcsImlhdCI6MTczMzkyOTIwN30.mF_51SZVPYfA63jnOh-zMRKrSFYfRM2NZl-8m2KubDM';
+
+const sendNotification = async (token, message) => {
+  try {
+    await useFetchApi({
+      method: 'POST',
+      endpoint: 'notifications/send',
+      data: { token, message },
+    });
+    console.log('Notification envoyée');
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de la notification:', error);
+  }
+};
+
+const calculateCountdown = (remainingTime) => {
+  const endTime = new Date(new Date().getTime() + remainingTime * 60 * 60 * 1000); // Convertir les heures en millisecondes
+  intervalId = setInterval(async () => {
+    const now = new Date().getTime();
+    const distance = endTime - now;
+
+    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    countdown.value = `${hours}h ${minutes}m ${seconds}s`;
+
+    if (distance < 0) {
+      clearInterval(intervalId);
+      countdown.value = 'Il n\'y a plus de temps gratuit disponible';
+
+      // Envoyer une notification lorsque le temps gratuit est terminé
+      await sendNotification(notificationToken, 'Votre temps gratuit est terminé.');
+    }
+  }, 1000);
+};
+
+const startParkingSession = () => {
+  const freeTime = parseFloat(route.params.freeTime); // Récupérer la durée du temps gratuit depuis les paramètres de la route et la convertir en nombre
+  calculateCountdown(freeTime);
+};
+
+const endParkingSession = () => {
   clearInterval(intervalId);
   countdown.value = 'Parking terminé';
   router.push('/parkings'); // Rediriger vers la page des parkings
 };
-  
-  onMounted(() => {
-    calculateCountdown();
-  });
-  
-  onUnmounted(() => {
-    clearInterval(intervalId);
-  });
-  </script>
+
+onMounted(() => {
+  startParkingSession();
+});
+
+onUnmounted(() => {
+  clearInterval(intervalId);
+});
+</script>
   
   <style scoped>
   .parking-session-container {

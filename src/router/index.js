@@ -44,7 +44,7 @@ const routes = [
         meta: { requiresAuth: true }
     },
     {
-        path: '/parkingSession',
+        path: '/parkingSession/:id/:freeTime',
         name: 'ParkingSession',
         component: ParkingSession,
         meta: { requiresAuth: true }

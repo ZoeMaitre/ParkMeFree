@@ -35,7 +35,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useFetchApiCrud } from '../composables/useFetchApiCrud.js';
 
-const { readAll } = useFetchApiCrud('parks');
+const { readAll, read } = useFetchApiCrud('parks');
 const { read: readUser } = useFetchApiCrud('users');
 const parkings = ref([]);
 const searchQuery = ref('');
@@ -146,6 +146,9 @@ const createParkingSession = async (parkingId) => {
       throw new Error('ID de la voiture non trouvé');
     }
 
+    const parking = await read(parkingId);
+    const freeTime = parking.freeTime;
+
     const apiUrl = import.meta.env.VITE_API_URL; // Utilisez l'URL de base définie dans les variables d'environnement
 
     const response = await fetch(`${apiUrl}/parkingSessions`, {
@@ -170,7 +173,7 @@ const createParkingSession = async (parkingId) => {
     }
     const data = JSON.parse(responseText); // Parser la réponse en JSON
     console.log('Session de parking créée:', data);
-    router.push('/parkingSession'); // Rediriger vers la page de session de parking
+    router.push({ name: 'ParkingSession', params: { id: parkingId, freeTime } });
   } catch (err) {
     console.error('Erreur:', err);
   }

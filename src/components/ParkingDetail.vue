@@ -115,7 +115,7 @@ const createParkingSession = async () => {
     }
     const data = JSON.parse(responseText); // Parser la réponse en JSON
     console.log('Session de parking créée:', data);
-    router.push('/parkingSession'); // Rediriger vers la page de session de parking
+    router.push({ name: 'ParkingSession', params: { id: parking.value._id, freeTime: parking.value.freeTime } });
   } catch (err) {
     console.error('Erreur:', err);
   }
