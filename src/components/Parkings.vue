@@ -203,7 +203,7 @@ html {
   min-height: 100vh;
   background-color: #d9d9d9;
   /* Fond gris partout */
-  overflow: hidden;
+  overflow: auto;
   text-align: left;
   font-size: 12px;
   color: #68a2a4;
@@ -412,6 +412,9 @@ html {
     margin-left: 10px; /* Réinitialiser l'espacement à gauche */
     margin-top: 10px; /* Ajouter un espacement en haut */
     width: 45%; /* Prendre toute la largeur */
+  }
+  .cards-container{
+    margin-bottom: 40px ;
   }
 }
 </style>
