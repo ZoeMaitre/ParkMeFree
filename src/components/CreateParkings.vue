@@ -121,7 +121,7 @@ const goBack = () => {
     height: 100%;
     position: relative;
     background-color: #a9c8c9;
-    overflow: hidden;
+    overflow: auto;
     text-align: center;
     font-size: 16px;
     color: #d9d9d9;
@@ -141,7 +141,7 @@ const goBack = () => {
     border-top-right-radius: 25px;
     background-color: #d9d9d9;
     width: 100%;
-    height: 80%;
+    height: 90%;
 }
 
 .title {
@@ -154,7 +154,7 @@ const goBack = () => {
     display: flex;
     justify-content: center;
     width: 80%;
-    max-width: 285px;
+    /* max-width: 400px; */
     height: auto;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
@@ -174,7 +174,7 @@ const goBack = () => {
     width: 90%;
     max-width: 320px;
     z-index: 2;
-    margin-top: 27vh;
+    margin-top: 50vh;
 }
 
 .form-group {
@@ -266,7 +266,7 @@ const goBack = () => {
 
     .background {
         top: 30vh;
-        height: 80%;
+        height: 90%;
     }
 
     .input {
@@ -283,7 +283,7 @@ const goBack = () => {
     }
 
     .add-parkings-form {
-        margin-top: 35vh;
+        margin-top: 50vh;
     }
 }
 
@@ -293,8 +293,8 @@ const goBack = () => {
     }
 
     .background {
-        top: 25vh;
-        height: 80%;
+        top: 35vh;
+        height: 90%;
     }
 
     .input {
@@ -308,10 +308,11 @@ const goBack = () => {
 
     .title {
         font-size: 10vw;
+        top: 2vh;
     }
 
     .add-parkings-form {
-        margin-top: 30vh;
+        margin-top: 60vh;
     }
 }
 </style>
